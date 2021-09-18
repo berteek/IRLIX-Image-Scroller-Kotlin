@@ -12,9 +12,17 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        bindAndInflate()
+
+        initAndSetFragments()
+    }
+
+    private fun bindAndInflate(): Unit {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+    }
 
+    private fun initAndSetFragments(): Unit {
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragmentContainerView, RecyclerViewFragment.newInstance())
