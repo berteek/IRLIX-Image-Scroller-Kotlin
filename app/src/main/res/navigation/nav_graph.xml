@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/recyclerViewFragment"
-        android:name="com.example.irliximagescrollerkotlin.ui.scroller.RecyclerViewFragment"
+        android:name="com.example.irliximagescrollerkotlin.ui.scroller.ScrollerFragment"
         android:label="fragment_recycler_view"
-        tools:layout="@layout/fragment_recycler_view" />
+        tools:layout="@layout/fragment_scroller" />
 </navigation>

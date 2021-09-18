@@ -3,8 +3,9 @@ package com.example.irliximagescrollerkotlin
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.irliximagescrollerkotlin.databinding.ActivityMainBinding
-import com.example.irliximagescrollerkotlin.ui.scroller.RecyclerViewFragment
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding
