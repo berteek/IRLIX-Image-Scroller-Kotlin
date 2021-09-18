@@ -3,7 +3,7 @@ package com.example.irliximagescrollerkotlin
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.irliximagescrollerkotlin.databinding.ActivityMainBinding
-import com.example.irliximagescrollerkotlin.fragments.RecyclerViewFragment
+import com.example.irliximagescrollerkotlin.ui.scroller.RecyclerViewFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -13,19 +13,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         bindAndInflate()
-
-        initAndSetFragments()
     }
 
     private fun bindAndInflate(): Unit {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-    }
-
-    private fun initAndSetFragments(): Unit {
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.fragmentContainerView, RecyclerViewFragment.newInstance())
-            .commit()
     }
 }
