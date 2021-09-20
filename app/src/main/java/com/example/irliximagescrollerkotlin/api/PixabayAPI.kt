@@ -1,6 +1,5 @@
 package com.example.irliximagescrollerkotlin.api
 
-import retrofit2.Response
 import retrofit2.http.GET
 
 interface PixabayAPI {

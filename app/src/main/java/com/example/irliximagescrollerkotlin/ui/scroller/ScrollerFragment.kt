@@ -29,30 +29,38 @@ class ScrollerFragment : Fragment(R.layout.fragment_scroller) {
     private var _binding: FragmentScrollerBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var adapter: ScrollerAdapter
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         _binding = FragmentScrollerBinding.bind(view)
 
-        val adapter = ScrollerAdapter()
+        setAdapter()
+        viewModel.somehowInitiateViewModel()
+        passImageBlocksToAdapter()
+    }
 
-        binding.apply {
-            rcView.setHasFixedSize(true)
-            rcView.layoutManager = LinearLayoutManager(activity)
-            rcView.adapter = adapter
-        }
-
-        viewModel.test()
-
+    private fun passImageBlocksToAdapter() {
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             try {
                 var imageBlocks: List<ImageBlock>? = viewModel.getImageBlocks()
+
                 withContext(Dispatchers.Main) {
                     adapter.setImageBlocks(imageBlocks)
                 }
             } catch (e: Exception) {
                 Log.e("Main", "Error : ${e.message}")
             }
+        }
+    }
+
+    private fun setAdapter() {
+        adapter = ScrollerAdapter()
+
+        binding.apply {
+            rcView.setHasFixedSize(true)
+            rcView.layoutManager = LinearLayoutManager(activity)
+            rcView.adapter = adapter
         }
     }
 

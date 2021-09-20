@@ -16,5 +16,5 @@ class ScrollerViewModel @Inject constructor(private val repository: Repository) 
 
     suspend fun getImageBlocks(): List<ImageBlock>? = repository.getImageBlocks()
 
-    fun test() { Log.e("MESSAGE", "MESSAGE")}
+    fun somehowInitiateViewModel() { Log.e("MESSAGE", "MESSAGE")}
 }
