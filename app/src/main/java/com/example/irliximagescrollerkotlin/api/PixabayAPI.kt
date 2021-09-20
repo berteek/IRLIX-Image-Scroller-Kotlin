@@ -10,5 +10,5 @@ interface PixabayAPI {
     }
 
     @GET("/api/?key=22771156-513389d498d9d466dffbb652f&q=cat&image_type=photo&pretty=true")
-    suspend fun searchImages(): Response<PixabayResponse>
+    suspend fun searchImages(): PixabayResponse
 }

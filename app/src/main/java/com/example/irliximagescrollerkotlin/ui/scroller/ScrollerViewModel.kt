@@ -1,6 +1,6 @@
 package com.example.irliximagescrollerkotlin.ui.scroller
 
-import androidx.lifecycle.LifecycleOwner
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.irliximagescrollerkotlin.data.ImageBlock
 import com.example.irliximagescrollerkotlin.data.Repository
@@ -8,9 +8,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class ScrollerViewModel @Inject constructor(private val repository: Repository): ViewModel() {
+class ScrollerViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
 
-    fun getImageBlocks(viewLifecycleOwner: LifecycleOwner): List<ImageBlock>? {
-        return repository.getImageBlocks(viewLifecycleOwner)
-    }
+//    init {
+//        Log.e("VIEWMODEL", "viewModel loaded")
+//    }
+
+    suspend fun getImageBlocks(): List<ImageBlock>? = repository.getImageBlocks()
+
+    fun test() { Log.e("MESSAGE", "MESSAGE")}
 }

@@ -1,13 +1,25 @@
 package com.example.irliximagescrollerkotlin.ui.scroller
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.liveData
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.irliximagescrollerkotlin.R
 import com.example.irliximagescrollerkotlin.data.ImageBlock
+import com.example.irliximagescrollerkotlin.data.Repository
 import com.example.irliximagescrollerkotlin.databinding.FragmentScrollerBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ScrollerFragment : Fragment(R.layout.fragment_scroller) {
@@ -16,8 +28,6 @@ class ScrollerFragment : Fragment(R.layout.fragment_scroller) {
 
     private var _binding: FragmentScrollerBinding? = null
     private val binding get() = _binding!!
-
-    private var imageBlocks: List<ImageBlock>? = emptyList()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -28,12 +38,22 @@ class ScrollerFragment : Fragment(R.layout.fragment_scroller) {
 
         binding.apply {
             rcView.setHasFixedSize(true)
+            rcView.layoutManager = LinearLayoutManager(activity)
             rcView.adapter = adapter
         }
 
-        imageBlocks = viewModel.getImageBlocks(viewLifecycleOwner)
+        viewModel.test()
 
-        adapter.setImageBlocks(imageBlocks)
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                var imageBlocks: List<ImageBlock>? = viewModel.getImageBlocks()
+                withContext(Dispatchers.Main) {
+                    adapter.setImageBlocks(imageBlocks)
+                }
+            } catch (e: Exception) {
+                Log.e("Main", "Error : ${e.message}")
+            }
+        }
     }
 
     override fun onDestroyView() {
