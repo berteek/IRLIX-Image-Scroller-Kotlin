@@ -18,11 +18,11 @@ class ScrollerAdapter: RecyclerView.Adapter<ScrollerAdapter.ImageBlockViewHolder
                 Glide.with(cardView)
                     .load(imageBlock?.imageURL)
                     .into(imageView)
-                usernameView.text = imageBlock?.username
-                likesTextView.text = imageBlock?.likes.toString()
-                tagsView.text = imageBlock?.tags
+                usernameView.text = imageBlock!!.username.replaceFirstChar { it.uppercase() }
+                likesTextView.text = imageBlock!!.likes.toString()
+                tagsView.text = imageBlock!!.tags
                 Glide.with(cardView)
-                    .load(imageBlock?.userImageURL)
+                    .load(imageBlock!!.userImageURL)
                     .into(userImageView)
             }
         }
