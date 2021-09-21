@@ -1,6 +1,9 @@
 package com.example.irliximagescrollerkotlin.di
 
+import android.app.Application
+import androidx.room.Room
 import com.example.irliximagescrollerkotlin.api.PixabayAPI
+import com.example.irliximagescrollerkotlin.data.db.ImageBlockDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,4 +26,16 @@ object AppModule {
     @Provides
     @Singleton
     fun providePixabayAPI(retrofit: Retrofit): PixabayAPI = retrofit.create(PixabayAPI::class.java)
+
+    @Provides
+    @Singleton
+    fun provideDatabase(app: Application) = Room.databaseBuilder(
+        app,
+        ImageBlockDatabase::class.java,
+        "image_block_database")
+        .fallbackToDestructiveMigration()
+        .build()
+
+    @Provides
+    fun provideImageBlockDao(db: ImageBlockDatabase) = db.imageBlockDao()
 }
