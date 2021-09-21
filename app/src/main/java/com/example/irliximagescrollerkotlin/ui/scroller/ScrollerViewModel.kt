@@ -10,11 +10,5 @@ import javax.inject.Inject
 @HiltViewModel
 class ScrollerViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
 
-//    init {
-//        Log.e("VIEWMODEL", "viewModel loaded")
-//    }
-
     suspend fun getImageBlocks(): List<ImageBlock>? = repository.getImageBlocks()
-
-    fun somehowInitiateViewModel() { Log.e("MESSAGE", "MESSAGE")}
 }

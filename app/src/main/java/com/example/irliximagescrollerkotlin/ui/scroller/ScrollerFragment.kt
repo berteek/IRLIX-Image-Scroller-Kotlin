@@ -36,7 +36,7 @@ class ScrollerFragment : Fragment(R.layout.fragment_scroller) {
         _binding = FragmentScrollerBinding.bind(view)
 
         setAdapter()
-        viewModel.somehowInitiateViewModel()
+        viewModel
         passImageBlocksToAdapter()
     }
 
