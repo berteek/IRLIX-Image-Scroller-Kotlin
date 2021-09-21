@@ -15,7 +15,7 @@ class Repository @Inject constructor(
 
     private val dao: ImageBlockDao = database.imageBlockDao()
 
-    suspend fun getImageBlocks(): List<ImageBlock>? {
+    suspend fun getImageBlocks(): List<ImageBlock> {
         if (dao.getAll().isNullOrEmpty()) {
             var imageBlocks = pixabayAPI.searchImages().imageBlocks
 

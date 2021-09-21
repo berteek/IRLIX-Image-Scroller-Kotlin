@@ -3,6 +3,7 @@ package com.example.irliximagescrollerkotlin.ui.scroller
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
@@ -38,12 +39,13 @@ class ScrollerFragment : Fragment(R.layout.fragment_scroller) {
         setAdapter()
         viewModel
         passImageBlocksToAdapter()
+        setSearchFilter()
     }
 
     private fun passImageBlocksToAdapter() {
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             try {
-                var imageBlocks: List<ImageBlock>? = viewModel.getImageBlocks()
+                var imageBlocks: List<ImageBlock> = viewModel.getImageBlocks()
 
                 withContext(Dispatchers.Main) {
                     adapter.setImageBlocks(imageBlocks)
@@ -62,6 +64,40 @@ class ScrollerFragment : Fragment(R.layout.fragment_scroller) {
             rcView.layoutManager = LinearLayoutManager(activity)
             rcView.adapter = adapter
         }
+    }
+
+    private fun setSearchFilter() {
+        binding.searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean = false
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+                    try {
+                        val imageBlocks: List<ImageBlock> = viewModel.getImageBlocks()
+
+                        var filteredImageBlocks: MutableList<ImageBlock> = mutableListOf()
+
+                        for (imageBlock in imageBlocks) {
+                            var tagsList = imageBlock.tags.split(",")
+                            loop@ for (tag in tagsList) {
+                                if (tag.contains(newText.toString())) {
+                                    filteredImageBlocks.add(imageBlock)
+                                    break@loop
+                                }
+                            }
+                        }
+
+                        withContext(Dispatchers.Main) {
+                            adapter.setImageBlocks(filteredImageBlocks)
+                        }
+                    } catch (e: Exception) {
+                        Log.e("Main", "Error : ${e.message}")
+                    }
+                }
+
+                return false
+            }
+        })
     }
 
     override fun onDestroyView() {

@@ -10,19 +10,19 @@ import com.example.irliximagescrollerkotlin.databinding.ImageBlockBinding
 
 class ScrollerAdapter: RecyclerView.Adapter<ScrollerAdapter.ImageBlockViewHolder>() {
 
-    private var imageBlocks: List<ImageBlock>? = emptyList()
+    private var imageBlocks: List<ImageBlock> = emptyList()
 
     class ImageBlockViewHolder(private val binding: ImageBlockBinding): RecyclerView.ViewHolder(binding.root) {
-        fun bind(imageBlock: ImageBlock?) {
+        fun bind(imageBlock: ImageBlock) {
             binding.apply {
                 Glide.with(cardView)
-                    .load(imageBlock?.imageURL)
+                    .load(imageBlock.imageURL)
                     .into(imageView)
-                usernameView.text = imageBlock!!.username.replaceFirstChar { it.uppercase() }
-                likesTextView.text = imageBlock!!.likes.toString()
-                tagsView.text = imageBlock!!.tags
+                usernameView.text = imageBlock.username.replaceFirstChar { it.uppercase() }
+                likesTextView.text = imageBlock.likes.toString()
+                tagsView.text = imageBlock.tags
                 Glide.with(cardView)
-                    .load(imageBlock!!.userImageURL)
+                    .load(imageBlock.userImageURL)
                     .into(userImageView)
             }
         }
@@ -33,22 +33,13 @@ class ScrollerAdapter: RecyclerView.Adapter<ScrollerAdapter.ImageBlockViewHolder
     }
 
     override fun onBindViewHolder(holder: ImageBlockViewHolder, position: Int) {
-        val currentImageBlock = imageBlocks?.get(position)
+        val currentImageBlock = imageBlocks[position]
         holder.bind(currentImageBlock)
     }
 
-    override fun getItemCount(): Int {
-        val nullableSize: Int? = imageBlocks?.size
+    override fun getItemCount(): Int = imageBlocks.size
 
-        return if (nullableSize != null) {
-            val size: Int = nullableSize
-            size
-        } else {
-            0
-        }
-    }
-
-    fun setImageBlocks(imageBlocks: List<ImageBlock>?) {
+    fun setImageBlocks(imageBlocks: List<ImageBlock>) {
         this.imageBlocks = imageBlocks
         notifyDataSetChanged()
     }
