@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity() {
         bindAndInflate()
     }
 
-    private fun bindAndInflate(): Unit {
+    private fun bindAndInflate() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
     }

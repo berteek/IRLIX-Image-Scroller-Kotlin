@@ -12,6 +12,9 @@ interface ImageBlockDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(imageBlock: ImageBlock)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(imageBlocks: List<ImageBlock>)
+
     @Update
     suspend fun update(imageBlock: ImageBlock)
 

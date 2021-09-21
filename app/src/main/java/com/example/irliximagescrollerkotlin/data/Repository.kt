@@ -19,9 +19,7 @@ class Repository @Inject constructor(
         if (dao.getAll().isNullOrEmpty()) {
             var imageBlocks = pixabayAPI.searchImages().imageBlocks
 
-            for (imageBlock in imageBlocks) {
-                dao.insert(imageBlock)
-            }
+            dao.insertAll(imageBlocks)
         }
 
         return dao.getAll()
