@@ -3,6 +3,7 @@ package com.example.irliximagescrollerkotlin.ui.scroller
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.AdapterView
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -10,6 +11,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.liveData
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.irliximagescrollerkotlin.R
 import com.example.irliximagescrollerkotlin.data.ImageBlock
@@ -23,7 +25,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ScrollerFragment : Fragment(R.layout.fragment_scroller) {
+class ScrollerFragment : Fragment(R.layout.fragment_scroller), ScrollerAdapter.OnImageBlockClickListener {
 
     private val viewModel by viewModels<ScrollerViewModel>()
 
@@ -57,7 +59,7 @@ class ScrollerFragment : Fragment(R.layout.fragment_scroller) {
     }
 
     private fun setAdapter() {
-        adapter = ScrollerAdapter()
+        adapter = ScrollerAdapter(this)
 
         binding.apply {
             rcView.setHasFixedSize(true)
@@ -67,7 +69,7 @@ class ScrollerFragment : Fragment(R.layout.fragment_scroller) {
     }
 
     private fun setSearchFilter() {
-        binding.searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean = false
 
             override fun onQueryTextChange(newText: String?): Boolean {
@@ -98,6 +100,11 @@ class ScrollerFragment : Fragment(R.layout.fragment_scroller) {
                 return false
             }
         })
+    }
+
+    override fun onImageBlockClick(imageBlock: ImageBlock) {
+        val action = ScrollerFragmentDirections.actionRecyclerViewFragmentToInformationFragment(imageBlock)
+        findNavController().navigate(action)
     }
 
     override fun onDestroyView() {

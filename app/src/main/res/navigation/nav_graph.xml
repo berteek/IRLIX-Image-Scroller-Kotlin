@@ -9,5 +9,18 @@
         android:id="@+id/recyclerViewFragment"
         android:name="com.example.irliximagescrollerkotlin.ui.scroller.ScrollerFragment"
         android:label="fragment_recycler_view"
-        tools:layout="@layout/fragment_scroller" />
+        tools:layout="@layout/fragment_scroller" >
+        <action
+            android:id="@+id/action_recyclerViewFragment_to_informationFragment"
+            app:destination="@id/informationFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/informationFragment"
+        android:name="com.example.irliximagescrollerkotlin.ui.scroller.InformationFragment"
+        android:label="fragment_information"
+        tools:layout="@layout/fragment_information" >
+        <argument
+            android:name="image_block"
+            app:argType="com.example.irliximagescrollerkotlin.data.ImageBlock" />
+    </fragment>
 </navigation>

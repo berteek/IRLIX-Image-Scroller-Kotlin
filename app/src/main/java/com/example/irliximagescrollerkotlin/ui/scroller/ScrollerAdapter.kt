@@ -8,12 +8,22 @@ import com.bumptech.glide.Glide
 import com.example.irliximagescrollerkotlin.data.ImageBlock
 import com.example.irliximagescrollerkotlin.databinding.ImageBlockBinding
 
-class ScrollerAdapter: RecyclerView.Adapter<ScrollerAdapter.ImageBlockViewHolder>() {
+class ScrollerAdapter(private val listener: OnImageBlockClickListener) :
+    RecyclerView.Adapter<ScrollerAdapter.ImageBlockViewHolder>() {
 
     private var imageBlocks: List<ImageBlock> = emptyList()
 
-    class ImageBlockViewHolder(private val binding: ImageBlockBinding): RecyclerView.ViewHolder(binding.root) {
-        fun bind(imageBlock: ImageBlock) {
+    inner class ImageBlockViewHolder(private val binding: ImageBlockBinding): RecyclerView.ViewHolder(binding.root) {
+
+        init {
+            binding.root.setOnClickListener {
+                val position = adapterPosition
+                val imageBlock = imageBlocks[position]
+                listener.onImageBlockClick(imageBlock)
+            }
+        }
+
+        fun bindViews(imageBlock: ImageBlock) {
             binding.apply {
                 Glide.with(cardView)
                     .load(imageBlock.imageURL)
@@ -34,7 +44,7 @@ class ScrollerAdapter: RecyclerView.Adapter<ScrollerAdapter.ImageBlockViewHolder
 
     override fun onBindViewHolder(holder: ImageBlockViewHolder, position: Int) {
         val currentImageBlock = imageBlocks[position]
-        holder.bind(currentImageBlock)
+        holder.bindViews(currentImageBlock)
     }
 
     override fun getItemCount(): Int = imageBlocks.size
@@ -42,5 +52,9 @@ class ScrollerAdapter: RecyclerView.Adapter<ScrollerAdapter.ImageBlockViewHolder
     fun setImageBlocks(imageBlocks: List<ImageBlock>) {
         this.imageBlocks = imageBlocks
         notifyDataSetChanged()
+    }
+
+    interface OnImageBlockClickListener {
+        fun onImageBlockClick(imageBlock: ImageBlock)
     }
 }

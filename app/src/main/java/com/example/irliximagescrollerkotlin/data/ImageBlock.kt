@@ -11,8 +11,11 @@ import kotlinx.android.parcel.Parcelize
 data class ImageBlock(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @SerializedName("webformatURL") val imageURL: String,
+    @SerializedName("largeImageURL") val highResolutionImageURL: String,
     val tags: String,
-    val likes: Int,
+    val likes: Long,
+    val views: Long,
+    val downloads: Long,
     val userImageURL: String,
     @SerializedName("user") val username: String
 ): Parcelable {
