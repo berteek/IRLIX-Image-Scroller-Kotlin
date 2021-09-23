@@ -1,16 +1,13 @@
-package com.example.irliximagescrollerkotlin.ui.scroller
+package com.example.irliximagescrollerkotlin.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.irliximagescrollerkotlin.R
 import com.example.irliximagescrollerkotlin.databinding.FragmentInformationBinding
-import com.example.irliximagescrollerkotlin.databinding.FragmentScrollerBinding
 
 class InformationFragment : Fragment(R.layout.fragment_information) {
 

@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/informationFragment"
-        android:name="com.example.irliximagescrollerkotlin.ui.scroller.InformationFragment"
+        android:name="com.example.irliximagescrollerkotlin.ui.InformationFragment"
         android:label="fragment_information"
         tools:layout="@layout/fragment_information" >
         <argument

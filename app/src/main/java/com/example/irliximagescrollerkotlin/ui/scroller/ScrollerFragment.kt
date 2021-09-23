@@ -7,10 +7,7 @@ import android.widget.AdapterView
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.liveData
+import androidx.lifecycle.*
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.irliximagescrollerkotlin.R
@@ -34,28 +31,16 @@ class ScrollerFragment : Fragment(R.layout.fragment_scroller), ScrollerAdapter.O
 
     private lateinit var adapter: ScrollerAdapter
 
+    private lateinit var imageBlocks: List<ImageBlock>
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentScrollerBinding.bind(view)
 
         setAdapter()
         viewModel
-        passImageBlocksToAdapter()
+        getAndDisplayImageBlocks()
         setSearchFilter()
-    }
-
-    private fun passImageBlocksToAdapter() {
-        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-            try {
-                var imageBlocks: List<ImageBlock> = viewModel.getImageBlocks()
-
-                withContext(Dispatchers.Main) {
-                    adapter.setImageBlocks(imageBlocks)
-                }
-            } catch (e: Exception) {
-                Log.e("Main", "Error : ${e.message}")
-            }
-        }
     }
 
     private fun setAdapter() {
@@ -73,33 +58,46 @@ class ScrollerFragment : Fragment(R.layout.fragment_scroller), ScrollerAdapter.O
             override fun onQueryTextSubmit(query: String?): Boolean = false
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-                    try {
-                        val imageBlocks: List<ImageBlock> = viewModel.getImageBlocks()
-
-                        var filteredImageBlocks: MutableList<ImageBlock> = mutableListOf()
-
-                        for (imageBlock in imageBlocks) {
-                            var tagsList = imageBlock.tags.split(",")
-                            loop@ for (tag in tagsList) {
-                                if (tag.contains(newText.toString())) {
-                                    filteredImageBlocks.add(imageBlock)
-                                    break@loop
-                                }
-                            }
-                        }
-
-                        withContext(Dispatchers.Main) {
-                            adapter.setImageBlocks(filteredImageBlocks)
-                        }
-                    } catch (e: Exception) {
-                        Log.e("Main", "Error : ${e.message}")
-                    }
-                }
+                getAndDisplayImageBlocks(newText)
 
                 return false
             }
         })
+    }
+
+    private fun getAndDisplayImageBlocks(filterString: String? = "") {
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                imageBlocks = viewModel.getImageBlocks()
+
+                if (filterString != "") {
+                    imageBlocks = filter(filterString)
+                }
+
+                withContext(Dispatchers.Main) {
+                    adapter.setImageBlocks(imageBlocks)
+                }
+
+            } catch (e: Exception) {
+                Log.e("Main", "Error : ${e.message}")
+            }
+        }
+    }
+
+    private fun filter(filterString: String?): MutableList<ImageBlock> {
+        val filteredImageBlocks: MutableList<ImageBlock> = mutableListOf()
+
+        for (imageBlock in imageBlocks) {
+            val tagsList = imageBlock.tags.split(",")
+            loop@ for (tag in tagsList) {
+                if (tag.contains(filterString.toString())) {
+                    filteredImageBlocks.add(imageBlock)
+                    break@loop
+                }
+            }
+        }
+
+        return filteredImageBlocks
     }
 
     override fun onImageBlockClick(imageBlock: ImageBlock) {
