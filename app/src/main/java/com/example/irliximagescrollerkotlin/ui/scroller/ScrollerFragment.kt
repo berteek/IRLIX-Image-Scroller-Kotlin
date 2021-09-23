@@ -22,7 +22,8 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ScrollerFragment : Fragment(R.layout.fragment_scroller), ScrollerAdapter.OnImageBlockClickListener {
+class ScrollerFragment : Fragment(R.layout.fragment_scroller),
+    ScrollerAdapter.OnImageBlockClickListener {
 
     private val viewModel by viewModels<ScrollerViewModel>()
 
@@ -31,14 +32,17 @@ class ScrollerFragment : Fragment(R.layout.fragment_scroller), ScrollerAdapter.O
 
     private lateinit var adapter: ScrollerAdapter
 
-    private lateinit var imageBlocks: List<ImageBlock>
+    private val obAdapterListener = AdapterListener()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentScrollerBinding.bind(view)
 
-        setAdapter()
         viewModel
+        setAdapter()
+        obAdapterListener.passToAdapter = {
+            adapter.setImageBlocks(it)
+        }
         getAndDisplayImageBlocks()
         setSearchFilter()
     }
@@ -66,38 +70,7 @@ class ScrollerFragment : Fragment(R.layout.fragment_scroller), ScrollerAdapter.O
     }
 
     private fun getAndDisplayImageBlocks(filterString: String? = "") {
-        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-            try {
-                imageBlocks = viewModel.getImageBlocks()
-
-                if (filterString != "") {
-                    imageBlocks = filter(filterString)
-                }
-
-                withContext(Dispatchers.Main) {
-                    adapter.setImageBlocks(imageBlocks)
-                }
-
-            } catch (e: Exception) {
-                Log.e("Main", "Error : ${e.message}")
-            }
-        }
-    }
-
-    private fun filter(filterString: String?): MutableList<ImageBlock> {
-        val filteredImageBlocks: MutableList<ImageBlock> = mutableListOf()
-
-        for (imageBlock in imageBlocks) {
-            val tagsList = imageBlock.tags.split(",")
-            loop@ for (tag in tagsList) {
-                if (tag.contains(filterString.toString())) {
-                    filteredImageBlocks.add(imageBlock)
-                    break@loop
-                }
-            }
-        }
-
-        return filteredImageBlocks
+        viewModel.getImageBlocks(obAdapterListener, filterString)
     }
 
     override fun onImageBlockClick(imageBlock: ImageBlock) {
