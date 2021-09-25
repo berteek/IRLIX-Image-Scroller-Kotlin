@@ -8,30 +8,55 @@ import com.example.irliximagescrollerkotlin.data.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+
+enum class FetchingMethod {
+    Coroutine, Call
+}
 
 @HiltViewModel
 class ScrollerViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
 
     private lateinit var imageBlocks: List<ImageBlock>
 
-    fun getImageBlocks(obAdapterListener: AdapterListener, filterString: String? = "") {
+    fun getImageBlocks(obAdapterListener: AdapterListener,
+                       fetchingMethod: FetchingMethod,
+                       filterString: String? = "") {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                imageBlocks = repository.getImageBlocks()
 
-                if (filterString != "") {
-                    imageBlocks = filter(filterString?.lowercase())
+                if (fetchingMethod == FetchingMethod.Coroutine) {
+                    imageBlocks = repository.getImageBlocksByCoroutine()
+                    filterAndPassToAdapter(obAdapterListener, filterString)
+                } else if (fetchingMethod == FetchingMethod.Call) {
+                    repository.getImageBlocksByCall { fetchedImageBlocks, isDatabaseFilled ->
+                        imageBlocks = fetchedImageBlocks
+                        if (isDatabaseFilled == false) {
+                            viewModelScope.launch(Dispatchers.IO) {
+                                repository.passImageBlocksToDatabase(imageBlocks)
+                            }
+                        }
+                        viewModelScope.launch(Dispatchers.IO) {
+                            filterAndPassToAdapter(obAdapterListener, filterString)
+                        }
+                    }
                 }
-
-                withContext(Dispatchers.Main) {
-                    obAdapterListener.passToAdapter(imageBlocks)
-                }
-
             } catch (e: Exception) {
                 Log.e("Main", "Error : ${e.message}")
             }
+        }
+    }
+
+    private suspend fun filterAndPassToAdapter(obAdapterListener: AdapterListener,
+                                       filterString: String? = "") {
+        if (filterString != "") {
+            imageBlocks = filter(filterString?.lowercase())
+        }
+
+        withContext(Dispatchers.Main) {
+            obAdapterListener.passToAdapter(imageBlocks)
         }
     }
 
