@@ -70,7 +70,7 @@ class ScrollerFragment : Fragment(R.layout.fragment_scroller),
     }
 
     private fun getAndDisplayImageBlocks(filterString: String? = "") {
-        viewModel.getImageBlocks(obAdapterListener, FetchingMethod.Call, filterString)
+        viewModel.getImageBlocks(obAdapterListener, FetchingMethod.RetrofitExecute, filterString)
     }
 
     override fun onImageBlockClick(imageBlock: ImageBlock) {

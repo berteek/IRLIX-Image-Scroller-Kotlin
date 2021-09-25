@@ -13,7 +13,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 enum class FetchingMethod {
-    Coroutine, Call
+    Coroutine, RetrofitEnqueue, RetrofitExecute
 }
 
 @HiltViewModel
@@ -30,8 +30,9 @@ class ScrollerViewModel @Inject constructor(private val repository: Repository) 
                 if (fetchingMethod == FetchingMethod.Coroutine) {
                     imageBlocks = repository.getImageBlocksByCoroutine()
                     filterAndPassToAdapter(obAdapterListener, filterString)
-                } else if (fetchingMethod == FetchingMethod.Call) {
-                    repository.getImageBlocksByCall { fetchedImageBlocks, isDatabaseFilled ->
+                } else if (fetchingMethod == FetchingMethod.RetrofitEnqueue ||
+                            fetchingMethod == FetchingMethod.RetrofitExecute) {
+                    repository.getImageBlocksByCall(fetchingMethod) { fetchedImageBlocks, isDatabaseFilled ->
                         imageBlocks = fetchedImageBlocks
                         if (isDatabaseFilled == false) {
                             viewModelScope.launch(Dispatchers.IO) {
